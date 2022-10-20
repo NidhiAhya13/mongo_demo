@@ -1,5 +1,6 @@
 const express = require('express');
 const { default: mongoose, Schema } = require('mongoose');
+const { $where } = require('./Blogs/BlogSchemaDEMO');
 const BlogSchemaDEMO = require('./Blogs/BlogSchemaDEMO');
 require('./config');
 const app = express();
@@ -18,6 +19,11 @@ app.post('/addblog', async (req, res, next) => {
   const result = await data.save();                                          //Blogschema.create ({ author : "nidhi ahya" ,               })  statically      will also work here  if dont want   to write data.save 
   console.log(result); 
   res.send("added data...");
+  
+ 
+
+  
+
 })
 
 //FIND API ************************************************//
@@ -56,7 +62,7 @@ app.put('/uplist', async (req, res, next) => {
     }
     )
 
-   
+  
      console.log(data);
     // const result = await data.save();                                          //Blogschema.create ({ author : "nidhi ahya" ,               })  statically      will also work here  if dont want   to write data.save 
     // console.log(result); 
@@ -74,6 +80,31 @@ app.post('/delete', async (req, res, next) => {
   
 })
 
+
+//QUERY API ************************************************//
+
+app.get('/query', async (req, res, next) => {
+  BlogSchema.statics.getAvgCost() = async function(_id){
+
+    console.log("working");
+    // const obj = await this.aggregate([ {$group : { _id : 'blogs' , averageCost :{ $avg : '$tutionFee'}}}])
+
+    // console.log(obj);
+}
+  
+    let queryStr= JSON.stringify(req.query);
+
+    queryStr = queryStr.replace(/\b(gt|gte|lte|lt|in)\b/g, match => `$${match}`);
+
+    console.log(queryStr);
+
+    let query = await BlogSchema.find(JSON.parse(queryStr));
+    let data1 = await query;
+    res.send(data1);
+    
+  })
+
+  
 
 app.listen(2000);
 
