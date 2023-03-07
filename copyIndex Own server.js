@@ -1,18 +1,18 @@
 // const { rejects } = require('assert');
-// const http = require('http');
+ const http = require('http');
 // const { resolve } = require('path');
 
                                                       // Create a local server to receive data from // 
-// const server = http.createServer((req, res) => {
-//     //   res.writeHead(200, { 'Content-Type': 'application/json' });
-//     res.write(JSON.stringify({ name: 'nidhi ahya ', age: 26 }));
-//     //   res.end(JSON.stringify({
-//     //     data: 'Hello World!'
-//     //   }));
-//     res.end();
-// });
+const server = http.createServer((req, res) => {
+    //   res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.write(JSON.stringify({ name: 'nidhi ahya ', age: 26 }));
+    //   res.end(JSON.stringify({
+    //     data: 'Hello World!'
+    //   }));
+    res.end();
+});
 
-// server.listen(7000);
+ server.listen(7000);
 
 // let a = 20;
 // let b = 0;

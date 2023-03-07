@@ -49,7 +49,7 @@
   app.post("/datainfo", (req, resp) => 
   {
     
-    // console.log(req.headers.authorization);
+    console.log(req.headers.authorization);
     // console.log(req.body);
     resp.send("posted.........");
   })

@@ -1,110 +1,174 @@
 const express = require('express');
-const { default: mongoose, Schema } = require('mongoose');
-const { $where } = require('./Blogs/BlogSchemaDEMO');
-const BlogSchemaDEMO = require('./Blogs/BlogSchemaDEMO');
-require('./config');
+
+require('./config/config');
 const app = express();
-const BlogSchema = require('./Blogs/BlogSchemaDEMO');
+
+let blogRouter = require('./Blogs/BlogRoute');
+//const BlogSchema = require('./Blogs/BlogSchemaDEMO');
+const bcrypt = require('bcrypt');
+let userRouter = require('./user/userRoute');
+// const userSchema = require('./user/userSC');
+
+var jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
+
+//********************/ For TIME ZONE /********************//
+var moment = require('moment');     
+// var a = moment().calendar();                   //Today at 2:16 PM
+//var a = moment().dayOfYear();                   //319
+//var a = moment().daysInMonth();                 //30
+// var a = moment().fromNow( );                   //a few seconds ago
+//console.log(a);
+// var C = moment().format("LLLL");                  //Tuesday, November 15, 2022 2:27 PM
+// console.log(C);                                   
+
+
+dotenv.config({ path: './config/.env' });
+//require("dotenv").config();
+
 
 app.use(express.json());
+app.use(blogRouter);
+app.use(userRouter);
 
 
-//ADD / POST  API ************************************************//
 
 
-app.post('/addblog', async (req, res, next) => {
-  console.log(req.body);
-  let data = new BlogSchema(req.body);
-  console.log(data);
-  const result = await data.save();                                          //Blogschema.create ({ author : "nidhi ahya" ,               })  statically      will also work here  if dont want   to write data.save 
-  console.log(result); 
-  res.send("added data...");
+//encryp API ************************************************//
+// app.post('/encr', async (req, res, next) => {
+
+//   try {
+//     console.log("this demo is for hashing ");                                          //for encryption of password////         // password: { type: String }  //                                                                                                                                                                                        
+//     const { name, email, password, role } = req.body;
+
+
+//     let pass = await bcrypt.hashSync(password, 10);
+
+//     //* For checking password is hashed or not    //console.log(pass);      //console.log(bcrypt.hashSync(pass, 10));    *//
+
+//     //create user 
+//     const user = await userSchema.create({ name, email, password : pass, role });
+//     console.log(user);
+
+//     return user.save();
+
+//   } catch (error) {
+//     res.status(501).json({ success: false });
+//   }
+
+// })
+
+//*************** TOKEN API ************************************************//
+// app.post('/token', async (req, res, next) => {
   
- 
+//   try {
+//   const { name, email, password } = req.body;
 
-  
-
-})
-
-//FIND API ************************************************//
-
-
-app.get('/bloglist', async (req, res, next) => {
-
-// let data = await BlogSchema.find({author : "nidhi ahya"});
-  let data = await BlogSchema.find()
-  //let data = await BlogSchema.find({ isDeleted : true })
-  res.send(data);
-  // res.send("list working......");
-  
-})
-
-//UPDATE API ************************************************//
-
-
-app.put('/uplist', async (req, res, next) => {
-  // let data = await BlogSchema.find({author : "nidhi ahya"});
-                  //let data = await BlogSchema.find()
-    //let data = await BlogSchema.find({ isDeleted : true })
-                  //res.send(data);
-    // res.send("list working......");
-    let data = await BlogSchema.findOneAndUpdate
-    (
-    {
-     author : "kajal oza "  // search query
-    },
-    {
-      author : "nidhi ahya"  // field:values to update
-    },
-    {
-      //upsert: true,
-      new: true 
-    }
-    )
-
-  
-     console.log(data);
-    // const result = await data.save();                                          //Blogschema.create ({ author : "nidhi ahya" ,               })  statically      will also work here  if dont want   to write data.save 
-    // console.log(result); 
-    res.send("updated data...");
-  })
-
-//DELETE API ************************************************//
-
-
-app.post('/delete', async (req, res, next) => {
-  console.log(req.body.id);
-  let data = await BlogSchema.updateOne({_id:req.body.id}, { isDeleted : true } );
-  res.send(data);
-  // res.send("DELETE working......");
-  
-})
-
-
-//QUERY API ************************************************//
-
-app.get('/query', async (req, res, next) => {
-  BlogSchema.statics.getAvgCost() = async function(_id){
-
-    console.log("working");
-    // const obj = await this.aggregate([ {$group : { _id : 'blogs' , averageCost :{ $avg : '$tutionFee'}}}])
-
-    // console.log(obj);
-}
-  
-    let queryStr= JSON.stringify(req.query);
-
-    queryStr = queryStr.replace(/\b(gt|gte|lte|lt|in)\b/g, match => `$${match}`);
-
-    console.log(queryStr);
-
-    let query = await BlogSchema.find(JSON.parse(queryStr));
-    let data1 = await query;
-    res.send(data1);
-    
-  })
+//   const user1 = await userSchema.create({ name, email, password });
+//   console.log(user1);
 
   
 
-app.listen(2000);
+//   //TOKEN creation ..................
+//   const token = user1.getSignToken();
+//   //console.log(token);
+//   user1.save();
+//   res.status(200).json({ success: true, token });
+//   }
+//   ///////
+//   // const  { email , password } = req.body ;
+//   // if(!email || !password) 
+//   // {
+//   //   return error ;
+//   // }
 
+//   // const user = await userSchema.findOne({email });
+//   // console.log(user);
+
+//   // //check if password matches
+//   // const isMatch = await userSchema.matchPass(password);
+
+//   // if(!isMatch)
+//   // {
+//   //   console.log(error);
+//   // }
+
+//   // user.save();
+
+//   // //TOKEN creation ..................
+//   // const token = user.getSignToken();
+//   // //console.log(token);
+//   // res.status(200).json({ success : true , token});
+//   ///////
+//   catch (error) {
+//     res.send({ status: 0, message: error });
+//   }
+// })
+
+//AUTHENTICATION //
+// app.post('/auth', async (req, res, next) => {
+
+//   try {
+//     const { email, password } = req.body;
+//     let pass = await bcrypt.hashSync(req.body.password, 10);
+
+//     //create user 
+//     const user = await userSchema.create({ email, password: pass });
+//     console.log(user);
+//     const token = user.getSignToken();
+//     // res.status(200).json({ success: true, token });
+//     if (!email || !password) {
+//       return error;
+//     }
+
+//     const user1 = await userSchema.findOne({ email }).select('+password');
+//     //console.log(user1);
+//     //check if password matches
+//     const isMatch = await user1.matchPass(password);
+
+//     if (!isMatch) {
+//       console.log('not matched...');
+//     }
+//     console.log(isMatch);
+//     //{
+//     //   "email" : "abc.nma@gmail.com",
+//     //   "password" :"890aa"
+//     // }
+
+//     user1.save();
+   
+//     return isMatch;
+//   } catch (error) {
+//     res.status(501).json({ success: false });
+//   }
+
+// })
+
+///////
+// const  { email , password } = req.body ;
+// if(!email || !password)
+// {
+//   return error ;
+// }
+
+// const user1 = await userSchema.findOne({email }).select('+password');
+// console.log(user);
+
+// //check if password matches
+// const isMatch = await user1.matchPass(password);
+
+// if(!isMatch)
+// {
+//   console.log(error);
+// }
+
+// user1.save();
+
+// //TOKEN creation ..................
+// const token = user1.getSignToken();
+// //console.log(token);
+// res.status(200).json({ success : true , token});
+////
+
+let port = 2000 ;
+app.listen(port, console.log(`Server running at http://localhost:${port}`));
